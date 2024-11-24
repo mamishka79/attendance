@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Tracker</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005fa3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Attendance Tracker</h1>
+    <p id="message"></p>
+
+    <table id="attendanceTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <button onclick="clearAttendance()">Clear Attendance</button>
+
+    <script>
+        const attendanceTable = document.getElementById("attendanceTable").querySelector("tbody");
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get("name");
+        const date = urlParams.get("date");
+
+        function addAttendanceRecord(name, date) {
+            const row = document.createElement("tr");
+
+            const nameCell = document.createElement("td");
+            nameCell.textContent = name;
+            row.appendChild(nameCell);
+
+            const dateCell = document.createElement("td");
+            dateCell.textContent = date;
+            row.appendChild(dateCell);
+
+            attendanceTable.appendChild(row);
+        }
+
+        function loadAttendance() {
+            const records = JSON.parse(localStorage.getItem("attendance")) || [];
+            records.forEach(record => addAttendanceRecord(record.name, record.date));
+        }
+
+        function saveAttendance(name, date) {
+            const records = JSON.parse(localStorage.getItem("attendance")) || [];
+            records.push({ name, date });
+            localStorage.setItem("attendance", JSON.stringify(records));
+        }
+
+        function clearAttendance() {
+            localStorage.removeItem("attendance");
+            attendanceTable.innerHTML = "";
+        }
+
+        if (name && date) {
+            document.getElementById("message").textContent = `Welcome, ${name}! Your attendance for ${date} has been recorded.`;
+            saveAttendance(name, date);
+        } else {
+            document.getElementById("message").textContent = "Error: Missing attendance data!";
+        }
+
+        loadAttendance();
+    </script>
+</body>
+</html>
