@@ -40,11 +40,26 @@
         button:hover {
             background-color: #005fa3;
         }
+        .form-container {
+            margin-top: 20px;
+        }
+        .form-container input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <h1>Attendance Tracker</h1>
     <p id="message"></p>
+
+    <div class="form-container" id="form-container">
+        <label for="name">Enter your name:</label>
+        <input type="text" id="name" placeholder="Your Name">
+        <button onclick="submitName()">Submit</button>
+    </div>
 
     <table id="attendanceTable">
         <thead>
@@ -61,11 +76,14 @@
 
     <script>
         const attendanceTable = document.getElementById("attendanceTable").querySelector("tbody");
+        const messageElement = document.getElementById("message");
+        const formContainer = document.getElementById("form-container");
 
+        // Получаем параметры из URL
         const urlParams = new URLSearchParams(window.location.search);
-        const name = urlParams.get("name");
         const date = urlParams.get("date");
 
+        // Функция для добавления записи
         function addAttendanceRecord(name, date) {
             const row = document.createElement("tr");
 
@@ -80,30 +98,42 @@
             attendanceTable.appendChild(row);
         }
 
+        // Функция для загрузки всех записей
         function loadAttendance() {
-            const records = JSON.parse(localStorage.getItem("attendance")) || [];
+            const records = JSON.parse(localStorage.getItem("attendance"))  [];
             records.forEach(record => addAttendanceRecord(record.name, record.date));
         }
 
+        // Функция для сохранения записи
         function saveAttendance(name, date) {
-            const records = JSON.parse(localStorage.getItem("attendance")) || [];
+            const records = JSON.parse(localStorage.getItem("attendance"))  [];
             records.push({ name, date });
             localStorage.setItem("attendance", JSON.stringify(records));
         }
 
+        // Функция для очистки таблицы
         function clearAttendance() {
             localStorage.removeItem("attendance");
-            attendanceTable.innerHTML = "";
+            attendanceTable.innerHTML = ""; // Очищаем таблицу на странице
         }
+
+        // Функция, которая вызывается при отправке имени
+        function submitName() {
+            const name = document.getElementById("name").value;
 
         if (name && date) {
-            document.getElementById("message").textContent = `Welcome, ${name}! Your attendance for ${date} has been recorded.`;
-            saveAttendance(name, date);
-        } else {
-            document.getElementById("message").textContent = "Error: Missing attendance data!";
+                document.getElementById("message").textContent = Welcome, ${name}! Your attendance for ${date} has been recorded.;
+                saveAttendance(name, date);
+                loadAttendance();
+                formContainer.style.display = "none"; // Скрываем форму
+            } else {
+                document.getElementById("message").textContent = "Please enter your name and try again.";
+            }
         }
 
+        // Загружаем данные
         loadAttendance();
+
     </script>
 </body>
 </html>
